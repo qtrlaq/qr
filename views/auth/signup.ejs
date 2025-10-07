@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Регистрация студента</title>
+    <link rel="stylesheet" href="/styles.css" />
+</head>
+<body class="center">
+    <div class="auth card">
+        <h1 style="margin:0 0 12px;">Регистрация студента</h1>
+        <% if (error) { %>
+            <div class="error"><%= error %></div>
+        <% } %>
+        <form method="post" action="/signup">
+            <label>Email</label>
+            <input type="email" name="email" required />
+            <label>Пароль</label>
+            <input type="password" name="password" required />
+            <button class="btn primary" type="submit">Создать</button>
+        </form>
+        <p>
+            Уже есть аккаунт? <a href="/login">Войти</a>
+        </p>
+    </div>
+</body>
+</html>
+
+

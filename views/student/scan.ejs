@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Сканер QR</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="https://unpkg.com/html5-qrcode" defer></script>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Сканер QR</h1>
+            <div>
+                <a class="btn" href="/student">Назад</a>
+                <a class="btn" href="/logout">Выйти</a>
+            </div>
+        </header>
+        <div class="card">
+            <div id="reader" style="width: 100%; max-width: 480px;"></div>
+            <p id="status"></p>
+        </div>
+    </div>
+    <script>
+    window.addEventListener('DOMContentLoaded', () => {
+        const reader = new Html5Qrcode("reader");
+        const status = document.getElementById('status');
+        function onScanSuccess(decodedText) {
+            try {
+                status.textContent = 'Ссылка найдена. Переход...';
+                window.location.href = decodedText;
+            } catch (e) {
+                status.textContent = 'Ошибка: ' + e.message;
+            }
+        }
+        function onScanFailure() {}
+        Html5Qrcode.getCameras().then(cameras => {
+            const cameraId = cameras && cameras.length ? cameras[0].id : null;
+            if (!cameraId) {
+                status.textContent = 'Камера не найдена';
+                return;
+            }
+            reader.start(
+                cameraId,
+                { fps: 10, qrbox: { width: 250, height: 250 } },
+                onScanSuccess,
+                onScanFailure
+            );
+        }).catch(err => {
+            status.textContent = 'Не удалось получить доступ к камере: ' + err;
+        });
+    });
+    </script>
+</body>
+</html>
+
+

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Студент</title>
+    <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Кабинет студента</h1>
+            <div>
+                <span><%= currentUser.email %></span>
+                <a class="btn" href="/logout">Выйти</a>
+            </div>
+        </header>
+
+        <div class="card">
+            <h3>Сканирование QR доступно после входа</h3>
+            <p>Откройте камеру телефона и наведите на QR преподавателя, или откройте ссылку по QR.</p>
+            <p><a class="btn primary" href="/student/scan">Открыть сканер в приложении</a></p>
+        </div>
+
+        <div class="card">
+            <h3 style="margin-top:0;">Последние отметки</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Сессия</th>
+                        <th>Время</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% recent.forEach(r => { %>
+                        <tr>
+                            <td>#<%= r.session_id %></td>
+                            <td><%= r.marked_at %></td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
+
+
