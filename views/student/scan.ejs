@@ -19,12 +19,18 @@
         <div class="card">
             <div id="reader" style="width: 100%; max-width: 480px;"></div>
             <p id="status"></p>
+            <div style="margin-top:10px;">
+                <button id="switchCam" class="btn">Переключить камеру</button>
+            </div>
         </div>
     </div>
     <script>
     window.addEventListener('DOMContentLoaded', () => {
         const reader = new Html5Qrcode("reader");
         const status = document.getElementById('status');
+        const switchBtn = document.getElementById('switchCam');
+        let cameras = [];
+        let currentIndex = 0;
         function onScanSuccess(decodedText) {
             try {
                 status.textContent = 'Ссылка найдена. Переход...';
@@ -34,20 +40,41 @@
             }
         }
         function onScanFailure() {}
-        Html5Qrcode.getCameras().then(cameras => {
-            const cameraId = cameras && cameras.length ? cameras[0].id : null;
-            if (!cameraId) {
-                status.textContent = 'Камера не найдена';
-                return;
-            }
+        function startByIndex(index){
+            const cam = cameras[index];
+            if (!cam) return;
             reader.start(
-                cameraId,
+                cam.id,
                 { fps: 10, qrbox: { width: 250, height: 250 } },
                 onScanSuccess,
                 onScanFailure
             );
+        }
+
+        Html5Qrcode.getCameras().then(deviceCameras => {
+            cameras = deviceCameras || [];
+            if (!cameras.length) {
+                status.textContent = 'Камера не найдена';
+                return;
+            }
+            const lower = (s) => (s || '').toLowerCase();
+            const preferIndex = cameras.findIndex(c => {
+                const label = lower(c.label);
+                return label.includes('back') || label.includes('rear') || label.includes('environment');
+            });
+            currentIndex = preferIndex >= 0 ? preferIndex : (cameras.length > 1 ? cameras.length - 1 : 0);
+            startByIndex(currentIndex);
         }).catch(err => {
             status.textContent = 'Не удалось получить доступ к камере: ' + err;
+        });
+
+        switchBtn.addEventListener('click', async () => {
+            try {
+                await reader.stop();
+            } catch(_) {}
+            if (!cameras.length) return;
+            currentIndex = (currentIndex + 1) % cameras.length;
+            startByIndex(currentIndex);
         });
     });
     </script>
