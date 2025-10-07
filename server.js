@@ -32,6 +32,7 @@ app.use((req, res, next) => {
 });
 
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/assets', express.static(path.join(__dirname, 'public')));
 
 app.get('/', (req, res) => {
 	if (!req.session.user) return res.redirect('/login');
